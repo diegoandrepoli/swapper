@@ -19,10 +19,10 @@ public class User {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(nullable = false, unique = true, length = 60)
+    @Column(nullable = false, length = 60)
     private String password;
 
     private boolean enabled;

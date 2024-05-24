@@ -10,7 +10,11 @@ public class RegisterDTO {
     @NotBlank(message = "Informe seu E-mail")
     private String email;
 
-    @Length(min = 8, max = 50, message = "Senha deve conter entre 8 e 50 caracteres")
+    @Length(min = 3, max = 50, message = "Nome deve ter entre 3 e 50 caracteres")
+    @NotBlank(message = "Informe seu nome")
+    private String name;
+
+    @Length(min = 8, max = 50, message = "Senha deve ter entre 8 e 50 caracteres")
     @NotBlank(message = "Informe a sua senha")
     private String password;
 
@@ -20,6 +24,14 @@ public class RegisterDTO {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPassword() {
