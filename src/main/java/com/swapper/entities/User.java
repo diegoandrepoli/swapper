@@ -1,21 +1,38 @@
 package com.swapper.entities;
 
+import jakarta.persistence.*;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.sql.Timestamp;
 
+@Entity
+@Table(name="users")
 public class User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_seq_id")
+    @SequenceGenerator(name = "users_seq_id", sequenceName = "users_seq_id", allocationSize = 1)
     private Long id;
 
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
 
+    @Column(nullable = false, unique = true, length = 50)
     private String name;
 
+    @Column(nullable = false, unique = true, length = 60)
     private String password;
 
     private boolean enabled;
 
+    @CreationTimestamp
+    @Column(name = "created")
     private Timestamp created;
 
+    @UpdateTimestamp
+    @Column(name = "updated")
     private Timestamp updated;
 
     public Long getId() {
