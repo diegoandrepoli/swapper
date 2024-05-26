@@ -1,10 +1,9 @@
 package com.swapper.rest;
 
-import com.swapper.assembler.UserAssembler;
-import com.swapper.dto.LoginDTO;
-import com.swapper.dto.PasswordDTO;
-import com.swapper.dto.RegisterDTO;
-import com.swapper.entities.User;
+import com.swapper.dto.LoginRequestDTO;
+import com.swapper.dto.LoginResponseDTO;
+import com.swapper.dto.PasswordRequestDTO;
+import com.swapper.dto.RegisterRequestDTO;
 import com.swapper.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,33 +20,28 @@ public class UserRest {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private UserAssembler userAssembler;
-
     @PostMapping(value = "register")
-    public ResponseEntity<Void> register(@Valid @RequestBody RegisterDTO registerDTO) {
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequestDTO registerDTO) {
         try {
-            User user = userAssembler.to(registerDTO);
-            userService.register(user);
+            userService.register(registerDTO);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
     @PostMapping(value = "login")
-    public ResponseEntity<Void> login(@Valid @RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginDTO) {
         try {
-            userService.login(loginDTO);
-            return ResponseEntity.ok().build();
+            LoginResponseDTO authenticate = userService.authenticate(loginDTO);
+            return ResponseEntity.ok(authenticate);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(401).build();
         }
     }
 
     @PostMapping(value = "password")
-    public ResponseEntity<Void> password(@Valid @RequestBody PasswordDTO passwordDTO) {
+    public ResponseEntity<Void> password(@Valid @RequestBody PasswordRequestDTO passwordDTO) {
         try {
             userService.password(passwordDTO);
             return ResponseEntity.ok().build();

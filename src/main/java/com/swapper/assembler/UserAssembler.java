@@ -1,17 +1,20 @@
 package com.swapper.assembler;
 
-import com.swapper.dto.RegisterDTO;
+import com.swapper.dto.RegisterRequestDTO;
 import com.swapper.entities.User;
+import com.swapper.enums.Role;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserAssembler {
 
-    public User to(RegisterDTO registerDTO) {
+    public User to(RegisterRequestDTO registerRequestDTO, String password) {
         User user = new User();
-        user.setEmail(registerDTO.getEmail());
-        user.setName(registerDTO.getName());
-        user.setPassword(registerDTO.getPassword());
+        user.setUsername(registerRequestDTO.getUsername());
+        user.setEmail(registerRequestDTO.getEmail());
+        user.setPassword(password);
+        user.addRole(Role.USER);
+        user.setEnabled(true);
         return user;
     }
 }

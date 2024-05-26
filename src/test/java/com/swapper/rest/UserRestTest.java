@@ -3,10 +3,9 @@ package com.swapper.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swapper.assembler.UserAssembler;
-import com.swapper.dto.LoginDTO;
-import com.swapper.dto.PasswordDTO;
-import com.swapper.dto.RegisterDTO;
-import com.swapper.entities.User;
+import com.swapper.dto.LoginRequestDTO;
+import com.swapper.dto.PasswordRequestDTO;
+import com.swapper.dto.RegisterRequestDTO;
 import com.swapper.service.UserService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -44,27 +43,32 @@ public class UserRestTest {
     @MockBean
     private UserAssembler userAssembler;
 
-    private RegisterDTO registerDTO;
+    private RegisterRequestDTO registerRequestDTO;
 
-    private  User user;
+    private LoginRequestDTO loginRequestDTO;
+
+    private PasswordRequestDTO passwordRequestDTO;
 
     @BeforeAll
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
-        String name = "my name";
+        String usermame = "myusername";
         String email = "fake@email.com";
         String password = "123456789";
 
-        this.registerDTO = new RegisterDTO();
-        registerDTO.setName(name);
-        registerDTO.setEmail(email);
-        registerDTO.setPassword(password);
+        this.registerRequestDTO = new RegisterRequestDTO();
+        registerRequestDTO.setUsername(usermame);
+        registerRequestDTO.setEmail(email);
+        registerRequestDTO.setPassword(password);
 
-        this.user = new User();
-        user.setName(name);
-        user.setEmail(email);
-        user.setPassword(password);
+        this.loginRequestDTO = new LoginRequestDTO();
+        loginRequestDTO.setUsername(usermame);
+        loginRequestDTO.setPassword(password);
+
+        this.passwordRequestDTO = new PasswordRequestDTO();
+        passwordRequestDTO.setPassword(password);
+        passwordRequestDTO.setNewPassword(password);
     }
 
     protected String mapToJson(Object object) throws JsonProcessingException {
@@ -76,47 +80,42 @@ public class UserRestTest {
     public void registerTest() throws Exception {
         String uri = "/api/v1/account/register";
 
-        String registerDtoAsString = mapToJson(registerDTO);
-        when(userAssembler.to(any())).thenReturn(user);
+        String registerRequestDTODtoAsString = mapToJson(this.registerRequestDTO);
 
         this.mockMvc.perform(MockMvcRequestBuilders.post(uri)
-            .content(registerDtoAsString)
+            .content(registerRequestDTODtoAsString)
             .characterEncoding("utf-8")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk());
 
-        verify(userService, timeout(1)).register(user);
+        verify(userService, timeout(1)).register(any());
     }
 
     @Test
     public void loginTest() throws Exception {
         String uri = "/api/v1/account/login";
 
-        LoginDTO loginDTO = new LoginDTO();
-        loginDTO.setEmail("fake@email.com");
-        loginDTO.setPassword("123456789");
-        String loginDTOAsString = mapToJson(loginDTO);
+        String loginRequestDTOAsString = mapToJson(this.loginRequestDTO);
 
         this.mockMvc.perform(MockMvcRequestBuilders.post(uri)
-            .content(loginDTOAsString)
+            .content(loginRequestDTOAsString)
             .characterEncoding("utf-8")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk());
+
+        verify(userService, timeout(1)).authenticate(any());
     }
 
     @Test
     public void passwordTest() throws Exception {
         String uri = "/api/v1/account/password";
 
-        PasswordDTO passwordDTO = new PasswordDTO();
-        passwordDTO.setPassword("123456789");
-        passwordDTO.setNewPassword("987654321");
-        String passwordDTOAsString = mapToJson(passwordDTO);
+        String passwordRequestDTOAsString = mapToJson(this.passwordRequestDTO);
 
         this.mockMvc.perform(MockMvcRequestBuilders.post(uri)
-            .content(passwordDTOAsString)
+            .content(passwordRequestDTOAsString)
             .characterEncoding("utf-8")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE))

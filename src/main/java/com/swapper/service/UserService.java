@@ -1,13 +1,15 @@
 package com.swapper.service;
 
-import com.swapper.dto.LoginDTO;
-import com.swapper.dto.PasswordDTO;
-import com.swapper.entities.User;
+import com.swapper.dto.LoginRequestDTO;
+import com.swapper.dto.PasswordRequestDTO;
+import com.swapper.dto.RegisterRequestDTO;
+import com.swapper.dto.LoginResponseDTO;
 
 public interface UserService {
-    public void register(User user);
 
-    public void login(LoginDTO loginDTO);
+    void register(RegisterRequestDTO dto) throws Exception;
 
-    public void password(PasswordDTO passwordDTO);
+    LoginResponseDTO authenticate(LoginRequestDTO dto) throws Exception;
+
+    void password(PasswordRequestDTO dto) throws Exception;
 }
