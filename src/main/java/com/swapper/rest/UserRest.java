@@ -4,10 +4,12 @@ import com.swapper.dto.LoginRequestDTO;
 import com.swapper.dto.LoginResponseDTO;
 import com.swapper.dto.PasswordRequestDTO;
 import com.swapper.dto.RegisterRequestDTO;
+import com.swapper.entities.User;
 import com.swapper.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,9 +43,9 @@ public class UserRest {
     }
 
     @PostMapping(value = "password")
-    public ResponseEntity<Void> password(@Valid @RequestBody PasswordRequestDTO passwordDTO) {
+    public ResponseEntity<Void> password(@AuthenticationPrincipal User user, @Valid @RequestBody PasswordRequestDTO passwordDTO) {
         try {
-            userService.password(passwordDTO);
+            userService.password(user.getId(), passwordDTO);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();

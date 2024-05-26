@@ -52,11 +52,18 @@ public class UserServiceImpl implements UserService {
         }
 
         final User user = userRepository.findBy(dto.getUsername());
-        return new LoginResponseDTO(jwtService.generateToken(user.getEmail()));
+        return new LoginResponseDTO(jwtService.generateToken(user.getUsername()));
     }
 
     @Override
-    public void password(PasswordRequestDTO dto) throws Exception {
-        // implement here!
+    public void password(Long id, PasswordRequestDTO passwordRequestDTO) throws Exception {
+        User user = userRepository.findBy(id).orElseThrow();
+        boolean isValid = passwordEncoder.matches(passwordRequestDTO.getPassword(), user.getPassword());
+
+        if(isValid) {
+            String newPassword = passwordEncoder.encode(passwordRequestDTO.getNewPassword());
+            user.setPassword(newPassword);
+            userRepository.save(user);
+        }
     }
 }

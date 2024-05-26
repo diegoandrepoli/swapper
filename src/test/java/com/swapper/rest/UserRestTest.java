@@ -6,16 +6,20 @@ import com.swapper.assembler.UserAssembler;
 import com.swapper.dto.LoginRequestDTO;
 import com.swapper.dto.PasswordRequestDTO;
 import com.swapper.dto.RegisterRequestDTO;
+import com.swapper.entities.User;
+import com.swapper.repository.UserRepository;
 import com.swapper.service.UserService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -25,17 +29,21 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = UserRest.class)
-@ContextConfiguration(classes = {UserRest.class})
-@AutoConfigureMockMvc(addFilters = false)
+@SpringBootTest
+@ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles("test")
 public class UserRestTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private static final String USERNAME = "myusername";
+
+    private static final String EMAIL = "fake@email.com";
+
+    private static final String PASSWORD = "123456789";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
+    private MockMvc mockMvc;
 
     @MockBean
     private UserService userService;
@@ -43,32 +51,41 @@ public class UserRestTest {
     @MockBean
     private UserAssembler userAssembler;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private RegisterRequestDTO registerRequestDTO;
 
     private LoginRequestDTO loginRequestDTO;
 
     private PasswordRequestDTO passwordRequestDTO;
 
+    private void setupAuthUser() {
+        User user = new User();
+        user.setEnabled(true);
+        user.setUsername(USERNAME);
+        user.setEmail(EMAIL);
+        user.setPassword(PASSWORD);
+        userRepository.save(user);
+    }
+
     @BeforeAll
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-
-        String usermame = "myusername";
-        String email = "fake@email.com";
-        String password = "123456789";
+        setupAuthUser();
 
         this.registerRequestDTO = new RegisterRequestDTO();
-        registerRequestDTO.setUsername(usermame);
-        registerRequestDTO.setEmail(email);
-        registerRequestDTO.setPassword(password);
+        registerRequestDTO.setUsername(USERNAME);
+        registerRequestDTO.setEmail(EMAIL);
+        registerRequestDTO.setPassword(PASSWORD);
 
         this.loginRequestDTO = new LoginRequestDTO();
-        loginRequestDTO.setUsername(usermame);
-        loginRequestDTO.setPassword(password);
+        loginRequestDTO.setUsername(USERNAME);
+        loginRequestDTO.setPassword(PASSWORD);
 
         this.passwordRequestDTO = new PasswordRequestDTO();
-        passwordRequestDTO.setPassword(password);
-        passwordRequestDTO.setNewPassword(password);
+        passwordRequestDTO.setPassword(USERNAME);
+        passwordRequestDTO.setNewPassword(PASSWORD);
     }
 
     protected String mapToJson(Object object) throws JsonProcessingException {
@@ -109,6 +126,7 @@ public class UserRestTest {
     }
 
     @Test
+    @WithUserDetails(USERNAME)
     public void passwordTest() throws Exception {
         String uri = "/api/v1/account/password";
 
@@ -120,5 +138,7 @@ public class UserRestTest {
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk());
+
+        verify(userService, timeout(1)).password(any(), any());
     }
 }

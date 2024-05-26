@@ -11,5 +11,5 @@ public interface UserService {
 
     LoginResponseDTO authenticate(LoginRequestDTO dto) throws Exception;
 
-    void password(PasswordRequestDTO dto) throws Exception;
+    void password(Long id, PasswordRequestDTO dto) throws Exception;
 }

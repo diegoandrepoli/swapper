@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private static final String[] PUBLIC = new String[] { "/test/**", "/api/v1/account/**" };
+    private static final String[] PUBLIC = new String[] { "/test/**", "/api/v1/account/register", "/api/v1/account/login" };
 
     @Autowired
     private UserDetailsService userDetailsService;
