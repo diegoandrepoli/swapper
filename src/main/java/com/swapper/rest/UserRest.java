@@ -6,6 +6,8 @@ import com.swapper.dto.PasswordRequestDTO;
 import com.swapper.dto.RegisterRequestDTO;
 import com.swapper.entities.User;
 import com.swapper.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +19,14 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @Validated
 @RequestMapping("/api/account")
+@Tag(name = "Account")
 public class UserRest {
 
     @Autowired
     private UserService userService;
 
     @PostMapping(value = "register")
+    @Operation(summary = "This endpoint register new user.")
     public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequestDTO registerDTO) {
         try {
             userService.register(registerDTO);
@@ -33,6 +37,7 @@ public class UserRest {
     }
 
     @PostMapping(value = "login")
+    @Operation(summary = "This endpoint login with username and password.")
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginDTO) {
         try {
             LoginResponseDTO authenticate = userService.authenticate(loginDTO);
@@ -43,6 +48,7 @@ public class UserRest {
     }
 
     @PostMapping(value = "password")
+    @Operation(summary = "This endpoint update user password.")
     public ResponseEntity<Void> password(@AuthenticationPrincipal User user, @Valid @RequestBody PasswordRequestDTO passwordDTO) {
         try {
             userService.password(user.getId(), passwordDTO);
