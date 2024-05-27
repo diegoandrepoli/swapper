@@ -6,6 +6,7 @@ import com.swapper.service.PlanetsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,13 +22,23 @@ public class PlanetsRest {
 
     @GetMapping()
     @Operation(summary = "This endpoint get all planets from Swapi API.")
-    public PlanetsListDTO all(@RequestParam(value = "page", required = false, name = "page", defaultValue = "1") int page) throws Exception {
-        return planetService.all(page);
+    public ResponseEntity<PlanetsListDTO> all(@RequestParam(value = "page", required = false, name = "page", defaultValue = "1") int page) throws Exception {
+        try {
+            PlanetsListDTO planetsListDTO = planetService.all(page);
+            return ResponseEntity.ok(planetsListDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "This endpoint get planet by id from Swapi API.")
-    public PlanetsDTO byId(@PathVariable(name = "id") int id) throws Exception {
-        return planetService.byId(id);
+    public ResponseEntity<PlanetsDTO> byId(@PathVariable(name = "id") int id) throws Exception {
+        try {
+            PlanetsDTO planetsDTO = planetService.byId(id);
+            return ResponseEntity.ok(planetsDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 }

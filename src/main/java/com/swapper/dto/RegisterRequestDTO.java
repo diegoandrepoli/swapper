@@ -10,7 +10,7 @@ public class RegisterRequestDTO {
     @NotBlank(message = "Enter your email")
     private String email;
 
-    @Length(min = 3, max = 50, message = "Name must be between 3 and 50 characters")
+    @Length(min = 5, max = 50, message = "Name must be between 3 and 50 characters")
     @NotBlank(message = "Enter your name")
     private String username;
 

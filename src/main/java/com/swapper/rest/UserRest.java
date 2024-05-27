@@ -32,7 +32,7 @@ public class UserRest {
             userService.register(registerDTO);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(500).build();
         }
     }
 
@@ -54,7 +54,7 @@ public class UserRest {
             userService.password(user.getId(), passwordDTO);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(500).build();
         }
     }
 }
