@@ -1,5 +1,6 @@
 package com.swapper.rest;
 
+import com.swapper.dto.FilmDTO;
 import com.swapper.dto.FilmListDTO;
 import com.swapper.service.FilmsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,12 @@ public class FilmsRest {
     private FilmsService filmsService;
 
     @GetMapping()
-    public FilmListDTO all(
-            @RequestParam(value = "page", required = false, name = "page", defaultValue = "1") int page,
-            @RequestParam(value = "format", required = false, name = "format", defaultValue = "json") String format
-    ) throws Exception {
-        return filmsService.all(page, format);
+    public FilmListDTO all(@RequestParam(value = "page", required = false, name = "page", defaultValue = "1") int page) throws Exception {
+        return filmsService.all(page);
+    }
+
+    @GetMapping("/{id}")
+    public FilmDTO byId(@PathVariable(name = "id") int id) throws Exception {
+        return filmsService.byId(id);
     }
 }

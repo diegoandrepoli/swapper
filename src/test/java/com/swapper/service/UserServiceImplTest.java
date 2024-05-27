@@ -99,7 +99,7 @@ public class UserServiceImplTest {
     public void authenticateTest() throws Exception {
         when(userAuthenticationToken.getToken(any(), any())).thenReturn(usernamePasswordAuthenticationToken);
         when(userRepository.findBy(USERNAME)).thenReturn(this.user);
-        when(jwtService.generateToken(EMAIL)).thenReturn(TOKEN);
+        when(jwtService.generateToken(USERNAME)).thenReturn(TOKEN);
 
         userService.authenticate(loginRequestDTO);
 

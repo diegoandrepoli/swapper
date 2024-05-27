@@ -3,6 +3,7 @@ package com.swapper.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swapper.assembler.UserAssembler;
+import com.swapper.config.EnvironmentConfig;
 import com.swapper.dto.LoginRequestDTO;
 import com.swapper.dto.PasswordRequestDTO;
 import com.swapper.dto.RegisterRequestDTO;
@@ -50,6 +51,9 @@ public class UserRestTest {
 
     @MockBean
     private UserAssembler userAssembler;
+
+    @MockBean
+    private EnvironmentConfig environmentConfig;
 
     @Autowired
     private UserRepository userRepository;

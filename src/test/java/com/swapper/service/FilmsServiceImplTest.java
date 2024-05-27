@@ -48,7 +48,11 @@ public class FilmsServiceImplTest {
 
     private FilmListDTO filmListDTO;
 
+    private FilmDTO filmDTO;
+
     private String filmListDTOAsString;
+
+    private String filmDTOAsString;
 
     @BeforeAll
     public void setup() throws JsonProcessingException {
@@ -59,7 +63,7 @@ public class FilmsServiceImplTest {
         String producer = "Gariel";
         String url = "/api/films/1/";
 
-        FilmDTO filmDTO = new FilmDTO();
+        this.filmDTO = new FilmDTO();
         filmDTO.setTitle(title);
         filmDTO.setEpisodeId(episode);
         filmDTO.setOpeningCrawl(openingCrawl);
@@ -75,19 +79,31 @@ public class FilmsServiceImplTest {
 
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         this.filmListDTOAsString = ow.writeValueAsString(filmListDTO);
+        this.filmDTOAsString = ow.writeValueAsString(filmDTO);
     }
 
     @Test
     public void allTest() throws Exception {
-        String url = SERVICE_URL + "/api/films?page=1&format=json";
-        String format = "json";
+        String url = SERVICE_URL + "/api/films?page=1";
         int page = 1;
 
         when(environmentConfig.getApiSwapiUrl()).thenReturn(SERVICE_URL);
         when(httpRequestHandler.get(url, SERVICE_METHOD)).thenReturn(filmListDTOAsString);
         when(objectMapper.readValue(filmListDTOAsString, FilmListDTO.class)).thenReturn(filmListDTO);
 
-        FilmListDTO result = filmsServiceImpl.all(page, format);
+        FilmListDTO result = filmsServiceImpl.all(page);
         assertTrue(new ReflectionEquals(result).matches(filmListDTO));
+    }
+
+    @Test
+    public void byIdTest() throws Exception {
+        String url = SERVICE_URL + "/api/films/1";
+
+        when(environmentConfig.getApiSwapiUrl()).thenReturn(SERVICE_URL);
+        when(httpRequestHandler.get(url, SERVICE_METHOD)).thenReturn(filmDTOAsString);
+        when(objectMapper.readValue(filmDTOAsString, FilmDTO.class)).thenReturn(filmDTO);
+
+        FilmDTO result = filmsServiceImpl.byId(1);
+        assertTrue(new ReflectionEquals(result).matches(filmDTO));
     }
 }
