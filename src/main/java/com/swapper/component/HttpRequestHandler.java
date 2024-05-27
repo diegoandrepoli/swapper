@@ -19,7 +19,10 @@ public class HttpRequestHandler {
                 .method(method, HttpRequest.BodyPublishers.noBody())
                 .build();
 
-            return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).body();
+            return HttpClient.newHttpClient()
+                .send(request, HttpResponse.BodyHandlers.ofString())
+                .body();
+
         } catch (Exception e) {
             throw new Exception("Unable to retrieve endpoint: " + url);
         }

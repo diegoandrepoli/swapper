@@ -13,5 +13,4 @@ public interface UserRepository extends CrudRepository<User, Integer> {
 
     @Query("SELECT u FROM User u WHERE u.id = ?1 AND enabled=?2")
     Optional<User> findBy(Long id, boolean enabled);
-
 }

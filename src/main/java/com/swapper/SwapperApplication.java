@@ -9,5 +9,4 @@ public class SwapperApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SwapperApplication.class, args);
 	}
-
 }
