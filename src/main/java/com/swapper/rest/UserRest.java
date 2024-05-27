@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @CrossOrigin
 @Validated
-@RequestMapping("/api/v1/account")
+@RequestMapping("/api/account")
 public class UserRest {
 
     @Autowired
