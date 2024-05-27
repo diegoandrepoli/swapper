@@ -51,13 +51,13 @@ public class UserServiceImpl implements UserService {
             throw new Exception("Invalid credentials", e);
         }
 
-        final User user = userRepository.findBy(dto.getUsername());
+        final User user = userRepository.findBy(dto.getUsername(), true);
         return new LoginResponseDTO(jwtService.generateToken(user.getUsername()));
     }
 
     @Override
     public void password(Long id, PasswordRequestDTO passwordRequestDTO) throws Exception {
-        User user = userRepository.findBy(id).orElseThrow();
+        User user = userRepository.findBy(id, true).orElseThrow();
         boolean isValid = passwordEncoder.matches(passwordRequestDTO.getPassword(), user.getPassword());
 
         if(isValid) {

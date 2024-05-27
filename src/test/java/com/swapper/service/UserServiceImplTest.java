@@ -98,7 +98,7 @@ public class UserServiceImplTest {
     @Test
     public void authenticateTest() throws Exception {
         when(userAuthenticationToken.getToken(any(), any())).thenReturn(usernamePasswordAuthenticationToken);
-        when(userRepository.findBy(USERNAME)).thenReturn(this.user);
+        when(userRepository.findBy(USERNAME, true)).thenReturn(this.user);
         when(jwtService.generateToken(USERNAME)).thenReturn(TOKEN);
 
         userService.authenticate(loginRequestDTO);
