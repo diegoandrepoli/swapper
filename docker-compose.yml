@@ -1,9 +1,0 @@
-services:
-  postgres:
-    image: postgres
-    environment:
-      POSTGRES_USER: "swapper"
-      POSTGRES_PASSWORD: "swapper"
-      POSTGRES_DB: "swapper"
-    ports:
-      - "5432:5432"

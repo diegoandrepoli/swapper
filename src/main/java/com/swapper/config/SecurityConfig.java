@@ -22,6 +22,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private static final String[] PUBLIC = new String[] {
+            // H2 database console
+            "/h2-console/**",
+
             // Account routes
             "/api/account/register",
             "/api/account/login",
@@ -40,6 +43,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
+            .headers().frameOptions().disable().disable() // curious configuration for the h2 console to work, not used in production
             .csrf().disable()
             .authorizeHttpRequests()
             .requestMatchers(PUBLIC).permitAll()

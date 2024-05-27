@@ -99,7 +99,7 @@ public class UserRestTest {
 
     @Test
     public void registerTest() throws Exception {
-        String uri = "/api/v1/account/register";
+        String uri = "/api/account/register";
 
         String registerRequestDTODtoAsString = mapToJson(this.registerRequestDTO);
 
@@ -115,7 +115,7 @@ public class UserRestTest {
 
     @Test
     public void loginTest() throws Exception {
-        String uri = "/api/v1/account/login";
+        String uri = "/api/account/login";
 
         String loginRequestDTOAsString = mapToJson(this.loginRequestDTO);
 
@@ -132,7 +132,7 @@ public class UserRestTest {
     @Test
     @WithUserDetails(USERNAME)
     public void passwordTest() throws Exception {
-        String uri = "/api/v1/account/password";
+        String uri = "/api/account/password";
 
         String passwordRequestDTOAsString = mapToJson(this.passwordRequestDTO);
 
