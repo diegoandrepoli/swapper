@@ -50,7 +50,7 @@ Você usar a API esta API com endpoints:
 * GET ```/api/films``` retorna lista de filmes.
 * GET ```/api/films/{id}``` retorna filme a partir do id.
 
-Exceto para os endpoints de registro e login você precisa adicionar o token retornado no endpoint de login no header de cada chamada da API, exemplo ```Authorization: Bearer XXXXXX```.
+O login é realizado pelo username e password definido no endpoint de registro, exceto para os endpoints de registro e login você precisa adicionar o token retornado no endpoint de login no header de cada chamada da API (exemplo ```Authorization: Bearer XXXXXX```) para consultar os dados.
 
 
 ## Documentação
