@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.transaction.BeforeTransaction;
@@ -51,14 +52,18 @@ class UserRestIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @BeforeTransaction
     public void setup() {
+        String password = passwordEncoder.encode("superuser123456");
+
         User user = new User();
         user.setEnabled(true);
         user.setUsername("superuser");
         user.setEmail("superuser@yes.com");
-        user.setPassword("superuser123456");
-
+        user.setPassword(password);
         this.userRepository.save(user);
     }
 

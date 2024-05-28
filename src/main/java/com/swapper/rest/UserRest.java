@@ -5,11 +5,13 @@ import com.swapper.dto.LoginResponseDTO;
 import com.swapper.dto.PasswordRequestDTO;
 import com.swapper.dto.RegisterRequestDTO;
 import com.swapper.entities.User;
+import com.swapper.exception.ProcessInvalidException;
 import com.swapper.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -49,10 +51,12 @@ public class UserRest {
 
     @PostMapping(value = "password")
     @Operation(summary = "This endpoint update user password.")
-    public ResponseEntity<Void> password(@AuthenticationPrincipal User user, @Valid @RequestBody PasswordRequestDTO passwordDTO) {
+    public ResponseEntity<String> password(@AuthenticationPrincipal User user, @Valid @RequestBody PasswordRequestDTO passwordDTO) {
         try {
             userService.password(user.getId(), passwordDTO);
             return ResponseEntity.ok().build();
+        } catch (ProcessInvalidException e) {
+            return ResponseEntity.status(401).contentType(MediaType.APPLICATION_JSON).body(e.getError());
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
         }

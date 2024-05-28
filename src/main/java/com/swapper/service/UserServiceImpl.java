@@ -7,6 +7,7 @@ import com.swapper.dto.PasswordRequestDTO;
 import com.swapper.dto.RegisterRequestDTO;
 import com.swapper.dto.LoginResponseDTO;
 import com.swapper.entities.User;
+import com.swapper.exception.ProcessInvalidException;
 import com.swapper.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -58,12 +59,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public void password(Long id, PasswordRequestDTO passwordRequestDTO) throws Exception {
         User user = userRepository.findBy(id, true).orElseThrow();
-        boolean isValid = passwordEncoder.matches(passwordRequestDTO.getPassword(), user.getPassword());
+        boolean isPasswordMatch = passwordEncoder.matches(passwordRequestDTO.getPassword(), user.getPassword());
 
-        if(isValid) {
-            String newPassword = passwordEncoder.encode(passwordRequestDTO.getNewPassword());
-            user.setPassword(newPassword);
-            userRepository.save(user);
+        if(!isPasswordMatch) {
+            throw new ProcessInvalidException("Invalid password.");
         }
+
+        String newPassword = passwordEncoder.encode(passwordRequestDTO.getNewPassword());
+        user.setPassword(newPassword);
+        userRepository.save(user);
     }
 }
