@@ -29,7 +29,7 @@ mvn spring-boot:run
 
 ## Executar teste unitários
 
-Para executar os testes unitários entre no diretório do projeto com oconsole (bash) e execute o comando Maven com a opção ```test```.
+Para executar os testes unitários entre no diretório do projeto com o console (bash) e execute o comando Maven com a opção ```test```.
 
 ```console
 mvn test
@@ -68,7 +68,7 @@ Esta API foi implementada com o banco de dados H2 (em memória), toda vez que vo
 * usuário: ``sa``
 * senha: ``sa``
 
-Voce pode acessar o banco de dados no navegador de internet através do console do banco de dados H2 no path ```h2-console```.
+Voce pode acessar o banco de dados pelo navegador de internet através do console do banco de dados H2 no path ```h2-console```.
 
 ```console
 http://localhost:8080/h2-console
