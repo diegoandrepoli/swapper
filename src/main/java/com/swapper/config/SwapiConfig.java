@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class EnvironmentConfig {
+public class SwapiConfig {
 
     @Value("${api.swapi.url}")
-    private String apiSwapiUrl;
+    private String url;
 
-    public String getApiSwapiUrl() {
-        return this.apiSwapiUrl;
+    public String getUrl() {
+        return this.url;
     }
 }

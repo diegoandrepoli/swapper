@@ -40,8 +40,8 @@ public class UserRest {
     @Operation(summary = "This endpoint login with username and password.")
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginDTO) {
         try {
-            LoginResponseDTO authenticate = userService.authenticate(loginDTO);
-            return ResponseEntity.ok(authenticate);
+            LoginResponseDTO loginResponseDTO = userService.authenticate(loginDTO);
+            return ResponseEntity.ok(loginResponseDTO);
         } catch (Exception e) {
             return ResponseEntity.status(401).build();
         }

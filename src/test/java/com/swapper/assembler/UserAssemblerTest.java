@@ -10,7 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class UserAssemblerTest {
 
     public static final String USERNAME = "myusername";
+
     public static final String EMAIL = "fake@email.com";
+
     public static final String PASSWORD = "123456789";
 
     @Test

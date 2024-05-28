@@ -1,10 +1,9 @@
 package com.swapper.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.swapper.component.HttpRequestHandler;
-import com.swapper.config.EnvironmentConfig;
+import com.swapper.config.SwapiConfig;
 import com.swapper.dto.FilmDTO;
 import com.swapper.dto.FilmListDTO;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.context.ContextConfiguration;
@@ -21,7 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ContextConfiguration(classes = {FilmsServiceImpl.class})
@@ -29,10 +27,6 @@ import static org.mockito.Mockito.when;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 public class FilmsServiceImplTest {
-
-    private static final String SERVICE_URL = "http://test.dev";
-
-    private static final String SERVICE_METHOD = "GET";
 
     @InjectMocks
     private FilmsServiceImpl filmsServiceImpl;
@@ -44,66 +38,70 @@ public class FilmsServiceImplTest {
     private ObjectMapper objectMapper;
 
     @Mock
-    private EnvironmentConfig environmentConfig;
+    private SwapiConfig swapiConfig;
 
-    private FilmListDTO filmListDTO;
+    private ObjectWriter objectWriter;
 
-    private FilmDTO filmDTO;
-
-    private String filmListDTOAsString;
-
-    private String filmDTOAsString;
+    private String serviceUrl;
 
     @BeforeAll
-    public void setup() throws JsonProcessingException {
-        String title = "A title";
-        int episode = 1;
-        String openingCrawl = "It is a period of spaceships....";
-        String director = "Other";
-        String producer = "Gariel";
-        String url = "/api/films/1/";
-
-        this.filmDTO = new FilmDTO();
-        filmDTO.setTitle(title);
-        filmDTO.setEpisodeId(episode);
-        filmDTO.setOpeningCrawl(openingCrawl);
-        filmDTO.setDirector(director);
-        filmDTO.setProducer(producer);
-        filmDTO.setUrl(url);
-
-        this.filmListDTO = new FilmListDTO();
-        filmListDTO.setCount(1);
-        List<FilmDTO> filmDTOList = new ArrayList<>();
-        filmDTOList.add(filmDTO);
-        filmListDTO.setResults(filmDTOList);
-
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        this.filmListDTOAsString = ow.writeValueAsString(filmListDTO);
-        this.filmDTOAsString = ow.writeValueAsString(filmDTO);
+    public void setup() {
+        this.serviceUrl = "http://test.dev";
+        this.objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
     }
 
     @Test
     public void allTest() throws Exception {
-        String url = SERVICE_URL + "/api/films?page=1";
-        int page = 1;
+        String url = serviceUrl + "/api/films?page=1";
 
-        when(environmentConfig.getApiSwapiUrl()).thenReturn(SERVICE_URL);
-        when(httpRequestHandler.get(url, SERVICE_METHOD)).thenReturn(filmListDTOAsString);
-        when(objectMapper.readValue(filmListDTOAsString, FilmListDTO.class)).thenReturn(filmListDTO);
+        FilmDTO film = new FilmDTO();
+        film.setTitle("Super film");
+        film.setEpisodeId(1);
+        film.setOpeningCrawl("It is a period of spaceships....");
+        film.setDirector("Joseph");
+        film.setProducer("Maiam");
+        film.setUrl("/api/films/1");
 
-        FilmListDTO result = filmsServiceImpl.all(page);
-        assertTrue(new ReflectionEquals(result).matches(filmListDTO));
+        List<FilmDTO> list = new ArrayList<>();
+        list.add(film);
+
+        FilmListDTO films = new FilmListDTO();
+        films.setCount(1);
+        films.setResults(list);
+
+        String filsmAsString = this.objectWriter.writeValueAsString(films);
+
+        when(this.swapiConfig.getUrl()).thenReturn(serviceUrl);
+        when(this.httpRequestHandler.get(url, "GET")).thenReturn(filsmAsString);
+        when(this.objectMapper.readValue(filsmAsString, FilmListDTO.class)).thenReturn(films);
+
+        FilmListDTO result = filmsServiceImpl.all(1);
+
+        String resultAsString = this.objectWriter.writeValueAsString(result);
+        assertEquals(resultAsString, filsmAsString);
     }
 
     @Test
     public void byIdTest() throws Exception {
-        String url = SERVICE_URL + "/api/films/1";
+        String url = serviceUrl + "/api/films/1";
 
-        when(environmentConfig.getApiSwapiUrl()).thenReturn(SERVICE_URL);
-        when(httpRequestHandler.get(url, SERVICE_METHOD)).thenReturn(filmDTOAsString);
-        when(objectMapper.readValue(filmDTOAsString, FilmDTO.class)).thenReturn(filmDTO);
+        FilmDTO film = new FilmDTO();
+        film.setTitle("Super film");
+        film.setEpisodeId(1);
+        film.setOpeningCrawl("It is a period of spaceships....");
+        film.setDirector("Joseph");
+        film.setProducer("Maiam");
+        film.setUrl("/api/films/1");
+
+        String filmAsString = this.objectWriter.writeValueAsString(film);
+
+        when(this.swapiConfig.getUrl()).thenReturn(serviceUrl);
+        when(this.httpRequestHandler.get(url, "GET")).thenReturn(filmAsString);
+        when(this.objectMapper.readValue(filmAsString, FilmDTO.class)).thenReturn(film);
 
         FilmDTO result = filmsServiceImpl.byId(1);
-        assertTrue(new ReflectionEquals(result).matches(filmDTO));
+
+        String resultAsString = this.objectWriter.writeValueAsString(result);
+        assertEquals(resultAsString, filmAsString);
     }
 }

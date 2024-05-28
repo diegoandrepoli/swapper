@@ -3,10 +3,10 @@ package com.swapper.service;
 import com.swapper.assembler.UserAssembler;
 import com.swapper.component.UserAuthenticationToken;
 import com.swapper.dto.LoginRequestDTO;
+import com.swapper.dto.LoginResponseDTO;
 import com.swapper.dto.RegisterRequestDTO;
 import com.swapper.entities.User;
 import com.swapper.repository.UserRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,63 +46,56 @@ public class UserServiceImplTest {
     private UserAuthenticationToken userAuthenticationToken;
 
     @Mock
-    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken;
+    private UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken;
 
     @Mock
     private AuthenticationManager authenticationManager;
 
-    private User user;
-
-    private RegisterRequestDTO registerRequestDTO;
-
-    private LoginRequestDTO loginRequestDTO;
-
-    private static final String USERNAME = "myusername";
-
-    private static final String EMAIL = "my@email.com";
-
-    private static final String PASSWORD = "123456789";
-
-    private static final String TOKEN = "8238R230230J20UJ230EU32J";
-
-    @BeforeAll
-    public void setup() {
-
-        this.user = new User();
-        user.setUsername(USERNAME);
-        user.setEmail(EMAIL);
-        user.setPassword(PASSWORD);
-        user.setEnabled(true);
-
-        this.registerRequestDTO = new RegisterRequestDTO();
-        registerRequestDTO.setEmail(EMAIL);
-        registerRequestDTO.setUsername(USERNAME);
-        registerRequestDTO.setPassword(PASSWORD);
-
-        this.loginRequestDTO = new LoginRequestDTO();
-        loginRequestDTO.setUsername(USERNAME);
-        loginRequestDTO.setPassword(PASSWORD);
-    }
-
     @Test
     public void registerTest() throws Exception {
-        when(passwordEncoder.encode(PASSWORD)).thenReturn(TOKEN);
-        when(userAssembler.to(this.registerRequestDTO, TOKEN)).thenReturn(this.user);
-        when(userRepository.save(this.user)).thenReturn(this.user);
+        String token = "8238R230230J20UJ230EU32J";
 
-        userService.register(this.registerRequestDTO);
+        User user = new User();
+        user.setUsername("myusername");
+        user.setEmail("my@email.com");
+        user.setPassword("123456789");
+        user.setEnabled(true);
 
-        verify(userRepository).save(this.user);
+        RegisterRequestDTO dto  = new RegisterRequestDTO();
+        dto.setEmail("my@email.com");
+        dto.setUsername("myusername");
+        dto.setPassword("123456789");
+
+        when(this.passwordEncoder.encode("123456789")).thenReturn(token);
+        when(this.userAssembler.to(dto, token)).thenReturn(user);
+        when(this.userRepository.save(user)).thenReturn(user);
+
+        this.userService.register(dto);
+
+        verify(this.userRepository).save(user);
     }
 
     @Test
     public void authenticateTest() throws Exception {
-        when(userAuthenticationToken.getToken(any(), any())).thenReturn(usernamePasswordAuthenticationToken);
-        when(userRepository.findBy(USERNAME, true)).thenReturn(this.user);
-        when(jwtService.generateToken(USERNAME)).thenReturn(TOKEN);
+        String token = "8238R230230J20UJ230EU32J";
 
-        userService.authenticate(loginRequestDTO);
+        User user = new User();
+        user.setUsername("myusername");
+        user.setEmail("my@email.com");
+        user.setPassword("123456789");
+        user.setEnabled(true);
 
-        verify(authenticationManager).authenticate(any());
+        LoginRequestDTO dto = new LoginRequestDTO();
+        dto.setUsername("myusername");
+        dto.setPassword("123456789");
+
+        when(this.userAuthenticationToken.getToken("myusername", "123456789")).thenReturn(this.usernamePasswordAuthenticationToken);
+        when(this.userRepository.findBy("myusername", true)).thenReturn(user);
+        when(this.jwtService.generateToken("myusername")).thenReturn(token);
+
+        LoginResponseDTO response = this.userService.authenticate(dto);
+
+        verify(this.authenticationManager).authenticate(any());
+        assert(!response.getToken().isEmpty());
     }
 }
